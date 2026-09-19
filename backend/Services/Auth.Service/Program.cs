@@ -1,35 +1,102 @@
+using System.Text;
+using Auth.Service.Data;
+using Auth.Service.Models;
+using Auth.Service.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
 
+string connectionString =
+    builder.Configuration.GetConnectionString("AuthDb")
+    ?? throw new InvalidOperationException(
+        "No se configuró ConnectionStrings:AuthDb."
+    );
 
+string jwtKey =
+    builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException(
+        "No se configuró Jwt:Key."
+    );
+
+string jwtIssuer =
+    builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException(
+        "No se configuró Jwt:Issuer."
+    );
+
+string jwtAudience =
+    builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException(
+        "No se configuró Jwt:Audience."
+    );
+
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
+
+builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddScoped<
+    IPasswordHasher<Usuario>,
+    PasswordHasher<Usuario>
+>();
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)
+            ),
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
-
+app.UseCors("Frontend");
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/health", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    return Results.Ok(new
+    {
+        servicio = "Auth.Service",
+        estado = "Funcionando"
+    });
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
