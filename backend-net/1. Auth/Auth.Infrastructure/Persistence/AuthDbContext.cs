@@ -19,5 +19,9 @@ public class AuthDbContext : DbContext
         modelBuilder.Entity<Usuario>()
             .HasIndex(usuario => usuario.NombreUsuario)
             .IsUnique();
+
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(usuario => usuario.Correo)
+            .IsUnique();
     }
 }
