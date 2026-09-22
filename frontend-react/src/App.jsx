@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DepreciacionPage from './pages/DepreciacionPage'
 import './App.css'
 
 const API_URL = '/api/auth'
@@ -135,33 +136,13 @@ function App() {
   }
 
   if (usuario) {
-    return (
-      <main className="pagina-panel">
-        <section className="panel-bienvenida">
-          <span className="marca">Depreciación App</span>
-
-          <h1>Bienvenida, {usuario.nombreUsuario}</h1>
-
-          <p>
-            Tu sesión se inició correctamente. Aquí se mostrará la pantalla para
-            registrar productos y calcular su depreciación.
-          </p>
-
-          <div className="datos-usuario">
-            <span>Usuario</span>
-            <strong>{usuario.nombreUsuario}</strong>
-
-            <span>Correo</span>
-            <strong>{usuario.correo}</strong>
-          </div>
-
-          <button type="button" className="boton-secundario" onClick={cerrarSesion}>
-            Cerrar sesión
-          </button>
-        </section>
-      </main>
-    )
-  }
+  return (
+    <DepreciacionPage
+      usuario={usuario}
+      onCerrarSesion={cerrarSesion}
+    />
+  )
+}
 
   return (
     <main className="pagina-autenticacion">
