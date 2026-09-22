@@ -2,7 +2,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(
+        builder.Configuration.GetSection("ReverseProxy")
+    );
 
 builder.Services.AddCors(options =>
 {
@@ -18,8 +20,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("Frontend");
-app.MapReverseProxy();
 
-app.MapGet("/health", () => Results.Ok(new { servicio = "ApiGateway", estado = "Funcionando" }));
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new
+    {
+        servicio = "ApiGateway",
+        estado = "Funcionando"
+    });
+});
+
+app.MapReverseProxy();
 
 app.Run();
