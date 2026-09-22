@@ -1,6 +1,0 @@
-@Depreciation.Service_HostAddress = http://localhost:5292
-
-GET {{Depreciation.Service_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
