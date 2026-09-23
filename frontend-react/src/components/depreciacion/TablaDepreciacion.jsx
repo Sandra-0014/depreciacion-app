@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { exportarPdf } from '../../services/exportService'
+
 const formatoMoneda = new Intl.NumberFormat('es-EC', {
   style: 'currency',
   currency: 'USD',
@@ -16,6 +19,22 @@ function formatearFecha(fecha) {
 }
 
 function TablaDepreciacion({ resultado }) {
+  const [exportando, setExportando] = useState(false)
+  const [errorExportacion, setErrorExportacion] = useState('')
+
+  const descargarPdf = async () => {
+    setExportando(true)
+    setErrorExportacion('')
+
+    try {
+      await exportarPdf(resultado.activoId)
+    } catch (error) {
+      setErrorExportacion(error.message)
+    } finally {
+      setExportando(false)
+    }
+  }
+
   if (!resultado) {
     return (
       <section className="tarjeta-depreciacion resultado-vacio">
@@ -36,23 +55,39 @@ function TablaDepreciacion({ resultado }) {
     <section className="tarjeta-depreciacion seccion-resultado">
       <div className="encabezado-resultado">
         <div>
-          <span className="etiqueta-seccion">Cálculo completado</span>
+          <span className="etiqueta-seccion">Cálculo </span>
           <h2>{resultado.nombre}</h2>
-          <p>Activo registrado con el código #{resultado.activoId}</p>
         </div>
 
-        <div className="resumen-valores">
-          <div>
-            <span>Valor de compra</span>
-            <strong>{formatoMoneda.format(resultado.valorCompra)}</strong>
+        <div className="acciones-resultado">
+          <div className="resumen-valores">
+            <div>
+              <span>Valor de compra</span>
+              <strong>{formatoMoneda.format(resultado.valorCompra)}</strong>
+            </div>
+
+            <div>
+              <span>Valor residual</span>
+              <strong>{formatoMoneda.format(resultado.valorResidual)}</strong>
+            </div>
           </div>
 
-          <div>
-            <span>Valor residual</span>
-            <strong>{formatoMoneda.format(resultado.valorResidual)}</strong>
-          </div>
+          <button
+            type="button"
+            className="boton-exportar"
+            onClick={descargarPdf}
+            disabled={exportando}
+          >
+            {exportando ? 'Generando PDF...' : 'Exportar PDF'}
+          </button>
         </div>
       </div>
+
+      {errorExportacion && (
+        <p className="mensaje-exportacion-error">
+          {errorExportacion}
+        </p>
+      )}
 
       {resultado.detalles?.length > 0 ? (
         <div className="contenedor-tabla">

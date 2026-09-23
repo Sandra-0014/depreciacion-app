@@ -32,13 +32,12 @@ function DepreciacionPage({ usuario, onCerrarSesion }) {
     <main className="pagina-depreciacion">
       <header className="barra-superior">
         <div>
-          <span className="marca marca-panel">Depreciación App</span>
+          <span className="marca marca-panel">Depreciación</span>
         </div>
 
         <div className="usuario-panel">
           <div>
             <strong>{usuario.nombreUsuario}</strong>
-            <span>{usuario.correo}</span>
           </div>
 
           <button
@@ -52,16 +51,6 @@ function DepreciacionPage({ usuario, onCerrarSesion }) {
       </header>
 
       <section className="contenido-depreciacion">
-        <div className="encabezado-pagina">
-          <span className="etiqueta-seccion">Panel de activos</span>
-
-          <h1>Calcula la depreciación de tus activos</h1>
-
-          <p>
-            Registra la información del activo y consulta su depreciación,
-            valor acumulado y valor actual en libros.
-          </p>
-        </div>
 
         {mensaje && (
           <p
@@ -74,7 +63,6 @@ function DepreciacionPage({ usuario, onCerrarSesion }) {
             {mensaje}
           </p>
         )}
-
         <div className="distribucion-depreciacion">
           <FormularioActivo
             onCalcular={realizarCalculo}

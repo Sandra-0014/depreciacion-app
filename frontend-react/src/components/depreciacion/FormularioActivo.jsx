@@ -90,11 +90,7 @@ function FormularioActivo({ onCalcular, cargando }) {
   return (
     <section className="tarjeta-depreciacion formulario-activo">
       <div className="encabezado-seccion">
-        <span className="etiqueta-seccion">Nuevo cálculo</span>
-        <h2>Registrar un activo</h2>
-        <p>
-          Completa la información para calcular la depreciación por línea recta.
-        </p>
+        <h2>Registro de activo</h2>
       </div>
 
       <form onSubmit={enviarFormulario}>
