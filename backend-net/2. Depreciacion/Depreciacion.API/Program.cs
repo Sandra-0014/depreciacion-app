@@ -1,6 +1,7 @@
 using System.Text;
 using Depreciacion.Application;
 using Depreciacion.Domain;
+using Depreciacion.Domain.Services;
 using Depreciacion.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

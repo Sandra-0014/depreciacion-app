@@ -1,8 +1,5 @@
-using Depreciacion.Domain;
 using Depreciacion.Domain.Entities;
-
-namespace Depreciacion.Application;
-
+namespace Depreciacion.Domain.Services;
 public class CalculoDepreciacionService
 {
     public List<DetalleDepreciacion> Calcular(Activo activo)
