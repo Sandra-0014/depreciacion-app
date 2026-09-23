@@ -1,7 +1,6 @@
 using Depreciacion.Domain;
 using Depreciacion.Domain.Entities;
 using Depreciacion.Domain.Services;
-
 namespace Depreciacion.Application;
 
 public class DepreciacionAppService
